@@ -7,7 +7,7 @@ class Record:
         if date is None:
             self.date = dt.datetime.now().date()
         else:
-            self.date = dt.datetime.strptime(date, '%d.%m.%Y').date() 
+            self.date = dt.datetime.strptime(date, '%d.%m.%Y').date()
         self.amount = amount
         self.comment = comment
 
@@ -43,32 +43,32 @@ class CashCalculator(Calculator):
 
     def get_today_cash_remained(self, currency):
         if currency == 'rub':
-            cash_of_balance = float(abs(self.limit - self.get_today_stats()))
+            cash_of_balance = float(self.limit - self.get_today_stats())
             currency_name = 'руб'
         elif currency == 'usd':
-            cash_of_balance = abs(self.limit - self.get_today_stats()) / \
+            cash_of_balance = (self.limit - self.get_today_stats()) / \
                                 self.USD_RATE
             currency_name = 'USD'
         elif currency == 'eur':
-            cash_of_balance = abs(self.limit - self.get_today_stats()) / \
+            cash_of_balance = (self.limit - self.get_today_stats()) / \
                                 self.EURO_RATE
             currency_name = 'Euro'
 
-        if self.limit > self.get_today_stats():                
+        if cash_of_balance > 0:                
             return f'На сегодня осталось {round(cash_of_balance, 2)} ' \
                     f'{currency_name}'
-        elif self.limit == self.get_today_stats():
+        elif cash_of_balance == 0:
             return 'Денег нет, держись'
-        elif self.limit < self.get_today_stats():
+        elif cash_of_balance < 0:
             return f'Денег нет, держись: твой долг - ' \
-                    f'{round(cash_of_balance, 2)} {currency_name}'
+                    f'{abs(round(cash_of_balance, 2))} {currency_name}'
 
 
 class CaloriesCalculator(Calculator):
     def get_calories_remained(self):
         calorie_balance = self.limit - self.get_today_stats()
         if calorie_balance > 0:
-            return f'Сегодня можно съесть что-нибудь ещё, но с общей калорийностью не более ' \
-                    f'{calorie_balance} кКал'
+            return f'Сегодня можно съесть что-нибудь ещё, но с общей ' \
+                    f'калорийностью не более {calorie_balance} кКал'
         elif calorie_balance <= 0:
             return 'Хватит есть!'
